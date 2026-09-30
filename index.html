@@ -1,0 +1,2451 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Compare 2026 and 2027 FEHB FFS premium costs by enrollment code.">
+  <title>FEHB Premium Comparison — 2026 vs. 2027</title>
+  <style>
+:root {
+  --bg: #f4f7fb;
+  --card: #ffffff;
+  --text: #172033;
+  --muted: #61708a;
+  --line: #dce3ee;
+  --primary: #1d4ed8;
+  --primary-soft: #eaf0ff;
+  --good: #0f766e;
+  --warn: #9a3412;
+  --warn-soft: #fff7ed;
+  --shadow: 0 12px 34px rgba(31, 41, 55, .08);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+.container {
+  width: min(1100px, calc(100% - 32px));
+  margin: 0 auto;
+}
+header {
+  background: linear-gradient(135deg, #172554, #1d4ed8);
+  color: #fff;
+  padding: 42px 0 36px;
+}
+header h1 {
+  margin: 0 0 10px;
+  font-size: clamp(1.9rem, 4vw, 2.8rem);
+  line-height: 1.05;
+}
+header p { margin: 0; max-width: 760px; color: #dbeafe; line-height: 1.55; }
+main { padding: 28px 0 44px; }
+.search-card, .result-card, .notice {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+.search-card { padding: 22px; }
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: end;
+}
+label { display: block; font-weight: 700; margin-bottom: 8px; }
+input {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  border: 1px solid #b9c4d4;
+  border-radius: 10px;
+  font-size: 1rem;
+  color: var(--text);
+  background: #fff;
+}
+input:focus { outline: 3px solid rgba(29,78,216,.16); border-color: var(--primary); }
+button {
+  min-height: 48px;
+  border: 0;
+  border-radius: 10px;
+  padding: 0 20px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+button:hover { filter: brightness(.95); }
+.helper { margin-top: 10px; color: var(--muted); font-size: .92rem; }
+#message { margin-top: 16px; }
+.notice {
+  margin-top: 18px;
+  padding: 16px 18px;
+  box-shadow: none;
+  color: var(--warn);
+  background: var(--warn-soft);
+  border-color: #fed7aa;
+}
+
+.code-directory {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+.directory-head {
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  align-items: end;
+  margin-bottom: 12px;
+}
+.directory-head h2 { margin: 0 0 4px; font-size: 1.15rem; }
+.directory-head p { margin: 0; color: var(--muted); font-size: .9rem; line-height: 1.45; }
+.directory-filter { width: min(330px, 100%); flex: 0 0 auto; }
+.directory-filter label { font-size: .86rem; }
+.directory-filter input { min-height: 42px; padding: 9px 11px; }
+.directory-table-wrap {
+  max-height: 520px;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+.directory-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+  font-size: .9rem;
+}
+.directory-table th,
+.directory-table td {
+  padding: 11px 12px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line);
+}
+.directory-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f8fafc;
+  color: var(--muted);
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.directory-table tr:last-child td { border-bottom: 0; }
+.directory-table tbody tr:hover { background: #f8fafc; }
+.code-link {
+  min-height: 0;
+  padding: 4px 9px;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: .9rem;
+  font-weight: 800;
+}
+.code-link:hover { filter: none; background: #dbeafe; }
+.directory-count { margin-top: 9px; color: var(--muted); font-size: .84rem; }
+.directory-empty { padding: 18px; color: var(--muted); text-align: center; }
+
+.result-card { margin-top: 22px; overflow: hidden; }
+.result-head {
+  padding: 22px;
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+}
+.eyebrow {
+  color: var(--primary);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  font-size: .78rem;
+}
+.result-head h2 { margin: 5px 0 5px; font-size: 1.45rem; }
+.subline { color: var(--muted); line-height: 1.5; }
+.code-badge {
+  flex: 0 0 auto;
+  background: var(--primary-soft);
+  color: var(--primary);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-weight: 850;
+  font-size: 1.2rem;
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.metric-section {
+  padding: 22px;
+  border-bottom: 1px solid var(--line);
+}
+.metric-section:nth-child(odd) { border-right: 1px solid var(--line); }
+.metric-section h3 { margin: 0 0 15px; font-size: 1.05rem; }
+.compare-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.value-box {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px;
+  min-width: 0;
+}
+.value-box .label {
+  display: block;
+  color: var(--muted);
+  font-size: .78rem;
+  margin-bottom: 5px;
+}
+.value-box strong { font-size: 1.08rem; overflow-wrap: anywhere; }
+.value-box.change { background: #f8fafc; }
+.value-box.change strong { color: var(--good); }
+.details {
+  padding: 18px 22px 22px;
+  color: var(--muted);
+  font-size: .92rem;
+  line-height: 1.55;
+}
+.rename-note {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+footer {
+  padding: 0 0 36px;
+  color: var(--muted);
+  font-size: .86rem;
+  line-height: 1.5;
+}
+.hidden { display: none !important; }
+@media (max-width: 760px) {
+  .form-row { grid-template-columns: 1fr; }
+  .metrics { grid-template-columns: 1fr; }
+  .metric-section:nth-child(odd) { border-right: 0; }
+  .compare-grid { grid-template-columns: 1fr; }
+  .result-head { flex-direction: column; }
+  .directory-head { flex-direction: column; align-items: stretch; }
+  .directory-filter { width: 100%; }
+}
+
+</style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>FEHB Premium Comparison</h1>
+      <p>Enter an enrollment code to compare 2026 and 2027 Fee-for-Service plan premiums for federal employees (excluding Postal Service employees), using the supplied premium-rate spreadsheets.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="search-card">
+      <form id="lookup-form" novalidate>
+        <div class="form-row">
+          <div>
+            <label for="enrollment-code">Enrollment code</label>
+            <input id="enrollment-code" name="code" list="code-list" inputmode="numeric" autocomplete="off"
+                   placeholder="Example: 111" aria-describedby="code-help">
+            <datalist id="code-list"></datalist>
+          </div>
+          <button type="submit">Compare premiums</button>
+        </div>
+        <div id="code-help" class="helper">Examples: 111 (BCBS Basic Self), 104 (BCBS Standard Self), 474 (APWU Consumer Driven Self).</div>
+      </form>
+      <div id="message" aria-live="polite"></div>
+
+      <section class="code-directory" aria-labelledby="directory-title">
+        <div class="directory-head">
+          <div>
+            <h2 id="directory-title">2027 enrollment code directory</h2>
+            <p>Find your plan below, then click its enrollment code to compare 2026 and 2027 premiums.</p>
+          </div>
+          <div class="directory-filter">
+            <label for="directory-search">Filter plans</label>
+            <input id="directory-search" type="search" autocomplete="off" placeholder="Plan, option, code, or enrollment type">
+          </div>
+        </div>
+        <div class="directory-table-wrap">
+          <table class="directory-table">
+            <thead>
+              <tr>
+                <th scope="col">Code</th>
+                <th scope="col">Plan</th>
+                <th scope="col">Option</th>
+                <th scope="col">Enrollment</th>
+              </tr>
+            </thead>
+            <tbody id="directory-body"></tbody>
+          </table>
+          <div id="directory-empty" class="directory-empty hidden">No 2027 plans match that filter.</div>
+        </div>
+        <div id="directory-count" class="directory-count" aria-live="polite"></div>
+      </section>
+    </section>
+
+    <section id="result" class="result-card hidden" aria-live="polite"></section>
+  </main>
+
+  <footer class="container">
+    Premium data is based solely on the two supplied 2026 and 2027 FEHB FFS spreadsheets.
+    This is an informational comparison tool and is not affiliated with or endorsed by OPM.
+  </footer>
+
+  <script>
+window.FEHB_DATA = [
+  {
+    "code": "104",
+    "plan": "Blue Cross and Blue Shield",
+    "option": "Standard Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self",
+    "plan2026": "Blue Cross and Blue Shield Service Benefit Plan FEP Blue Standard",
+    "option2026": "Standard",
+    "plan2027": "Blue Cross and Blue Shield",
+    "option2027": "Standard Option",
+    "y2026": {
+      "plan": "Blue Cross and Blue Shield Service Benefit Plan FEP Blue Standard",
+      "option": "Standard",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 513.08,
+      "biweeklyGovt": 324.76,
+      "biweeklyEmployee": 188.32,
+      "monthlyTotal": 1111.67,
+      "monthlyGovt": 703.65,
+      "monthlyEmployee": 408.02
+    },
+    "y2027": {
+      "plan": "Blue Cross and Blue Shield",
+      "option": "Standard Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 556.69,
+      "biweeklyGovt": 352.04,
+      "biweeklyEmployee": 204.65,
+      "monthlyTotal": 1206.16,
+      "monthlyGovt": 762.75,
+      "monthlyEmployee": 443.41
+    }
+  },
+  {
+    "code": "105",
+    "plan": "Blue Cross and Blue Shield",
+    "option": "Standard Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self & Family",
+    "plan2026": "Blue Cross and Blue Shield Service Benefit Plan FEP Blue Standard",
+    "option2026": "Standard",
+    "plan2027": "Blue Cross and Blue Shield",
+    "option2027": "Standard Option",
+    "y2026": {
+      "plan": "Blue Cross and Blue Shield Service Benefit Plan FEP Blue Standard",
+      "option": "Standard",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 1235.69,
+      "biweeklyGovt": 778.03,
+      "biweeklyEmployee": 457.66,
+      "monthlyTotal": 2677.33,
+      "monthlyGovt": 1685.73,
+      "monthlyEmployee": 991.6
+    },
+    "y2027": {
+      "plan": "Blue Cross and Blue Shield",
+      "option": "Standard Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 1340.72,
+      "biweeklyGovt": 843.82,
+      "biweeklyEmployee": 496.9,
+      "monthlyTotal": 2904.89,
+      "monthlyGovt": 1828.28,
+      "monthlyEmployee": 1076.61
+    }
+  },
+  {
+    "code": "106",
+    "plan": "Blue Cross and Blue Shield",
+    "option": "Standard Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self Plus One",
+    "plan2026": "Blue Cross and Blue Shield Service Benefit Plan FEP Blue Standard",
+    "option2026": "Standard",
+    "plan2027": "Blue Cross and Blue Shield",
+    "option2027": "Standard Option",
+    "y2026": {
+      "plan": "Blue Cross and Blue Shield Service Benefit Plan FEP Blue Standard",
+      "option": "Standard",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 1122.05,
+      "biweeklyGovt": 711.17,
+      "biweeklyEmployee": 410.88,
+      "monthlyTotal": 2431.11,
+      "monthlyGovt": 1540.87,
+      "monthlyEmployee": 890.24
+    },
+    "y2027": {
+      "plan": "Blue Cross and Blue Shield",
+      "option": "Standard Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 1217.42,
+      "biweeklyGovt": 767.53,
+      "biweeklyEmployee": 449.89,
+      "monthlyTotal": 2637.74,
+      "monthlyGovt": 1662.98,
+      "monthlyEmployee": 974.76
+    }
+  },
+  {
+    "code": "111",
+    "plan": "Blue Cross and Blue Shield",
+    "option": "Basic Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self",
+    "plan2026": "Blue Cross and Blue Shield Service Benefit Plan FEP Blue Basic",
+    "option2026": "Basic",
+    "plan2027": "Blue Cross and Blue Shield",
+    "option2027": "Basic Option",
+    "y2026": {
+      "plan": "Blue Cross and Blue Shield Service Benefit Plan FEP Blue Basic",
+      "option": "Basic",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 458.53,
+      "biweeklyGovt": 324.76,
+      "biweeklyEmployee": 133.77,
+      "monthlyTotal": 993.48,
+      "monthlyGovt": 703.65,
+      "monthlyEmployee": 289.83
+    },
+    "y2027": {
+      "plan": "Blue Cross and Blue Shield",
+      "option": "Basic Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 497.5,
+      "biweeklyGovt": 352.04,
+      "biweeklyEmployee": 145.46,
+      "monthlyTotal": 1077.92,
+      "monthlyGovt": 762.75,
+      "monthlyEmployee": 315.17
+    }
+  },
+  {
+    "code": "112",
+    "plan": "Blue Cross and Blue Shield",
+    "option": "Basic Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self & Family",
+    "plan2026": "Blue Cross and Blue Shield Service Benefit Plan FEP Blue Basic",
+    "option2026": "Basic",
+    "plan2027": "Blue Cross and Blue Shield",
+    "option2027": "Basic Option",
+    "y2026": {
+      "plan": "Blue Cross and Blue Shield Service Benefit Plan FEP Blue Basic",
+      "option": "Basic",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 1134.89,
+      "biweeklyGovt": 778.03,
+      "biweeklyEmployee": 356.86,
+      "monthlyTotal": 2458.93,
+      "monthlyGovt": 1685.73,
+      "monthlyEmployee": 773.2
+    },
+    "y2027": {
+      "plan": "Blue Cross and Blue Shield",
+      "option": "Basic Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 1231.36,
+      "biweeklyGovt": 843.82,
+      "biweeklyEmployee": 387.54,
+      "monthlyTotal": 2667.95,
+      "monthlyGovt": 1828.28,
+      "monthlyEmployee": 839.67
+    }
+  },
+  {
+    "code": "113",
+    "plan": "Blue Cross and Blue Shield",
+    "option": "Basic Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self Plus One",
+    "plan2026": "Blue Cross and Blue Shield Service Benefit Plan FEP Blue Basic",
+    "option2026": "Basic",
+    "plan2027": "Blue Cross and Blue Shield",
+    "option2027": "Basic Option",
+    "y2026": {
+      "plan": "Blue Cross and Blue Shield Service Benefit Plan FEP Blue Basic",
+      "option": "Basic",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 1030.42,
+      "biweeklyGovt": 711.17,
+      "biweeklyEmployee": 319.25,
+      "monthlyTotal": 2232.58,
+      "monthlyGovt": 1540.87,
+      "monthlyEmployee": 691.71
+    },
+    "y2027": {
+      "plan": "Blue Cross and Blue Shield",
+      "option": "Basic Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 1118.01,
+      "biweeklyGovt": 767.53,
+      "biweeklyEmployee": 350.48,
+      "monthlyTotal": 2422.36,
+      "monthlyGovt": 1662.98,
+      "monthlyEmployee": 759.38
+    }
+  },
+  {
+    "code": "131",
+    "plan": "Blue Cross and Blue Shield",
+    "option": "FEP Blue Focus",
+    "location": "Nationwide",
+    "enrollmentType": "Self",
+    "plan2026": "Blue Cross and Blue Shield Service Benefit Plan FEP Blue Focus",
+    "option2026": "FEP Blue Focus",
+    "plan2027": "Blue Cross and Blue Shield",
+    "option2027": "FEP Blue Focus",
+    "y2026": {
+      "plan": "Blue Cross and Blue Shield Service Benefit Plan FEP Blue Focus",
+      "option": "FEP Blue Focus",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 267.26,
+      "biweeklyGovt": 200.45,
+      "biweeklyEmployee": 66.81,
+      "monthlyTotal": 579.06,
+      "monthlyGovt": 434.3,
+      "monthlyEmployee": 144.76
+    },
+    "y2027": {
+      "plan": "Blue Cross and Blue Shield",
+      "option": "FEP Blue Focus",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 296.66,
+      "biweeklyGovt": 222.5,
+      "biweeklyEmployee": 74.16,
+      "monthlyTotal": 642.76,
+      "monthlyGovt": 482.07,
+      "monthlyEmployee": 160.69
+    }
+  },
+  {
+    "code": "132",
+    "plan": "Blue Cross and Blue Shield",
+    "option": "FEP Blue Focus",
+    "location": "Nationwide",
+    "enrollmentType": "Self & Family",
+    "plan2026": "Blue Cross and Blue Shield Service Benefit Plan FEP Blue Focus",
+    "option2026": "FEP Blue Focus",
+    "plan2027": "Blue Cross and Blue Shield",
+    "option2027": "FEP Blue Focus",
+    "y2026": {
+      "plan": "Blue Cross and Blue Shield Service Benefit Plan FEP Blue Focus",
+      "option": "FEP Blue Focus",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 631.9,
+      "biweeklyGovt": 473.93,
+      "biweeklyEmployee": 157.97,
+      "monthlyTotal": 1369.12,
+      "monthlyGovt": 1026.84,
+      "monthlyEmployee": 342.28
+    },
+    "y2027": {
+      "plan": "Blue Cross and Blue Shield",
+      "option": "FEP Blue Focus",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 701.42,
+      "biweeklyGovt": 526.07,
+      "biweeklyEmployee": 175.35,
+      "monthlyTotal": 1519.74,
+      "monthlyGovt": 1139.81,
+      "monthlyEmployee": 379.93
+    }
+  },
+  {
+    "code": "133",
+    "plan": "Blue Cross and Blue Shield",
+    "option": "FEP Blue Focus",
+    "location": "Nationwide",
+    "enrollmentType": "Self Plus One",
+    "plan2026": "Blue Cross and Blue Shield Service Benefit Plan FEP Blue Focus",
+    "option2026": "FEP Blue Focus",
+    "plan2027": "Blue Cross and Blue Shield",
+    "option2027": "FEP Blue Focus",
+    "y2026": {
+      "plan": "Blue Cross and Blue Shield Service Benefit Plan FEP Blue Focus",
+      "option": "FEP Blue Focus",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 574.54,
+      "biweeklyGovt": 430.91,
+      "biweeklyEmployee": 143.63,
+      "monthlyTotal": 1244.84,
+      "monthlyGovt": 933.63,
+      "monthlyEmployee": 311.21
+    },
+    "y2027": {
+      "plan": "Blue Cross and Blue Shield",
+      "option": "FEP Blue Focus",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 637.74,
+      "biweeklyGovt": 478.31,
+      "biweeklyEmployee": 159.43,
+      "monthlyTotal": 1381.77,
+      "monthlyGovt": 1036.33,
+      "monthlyEmployee": 345.44
+    }
+  },
+  {
+    "code": "251",
+    "plan": "GEHA Indemnity Benefit Plan",
+    "option": "Elevate Plus Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self",
+    "plan2026": "GEHA Indemnity Benefit Plan",
+    "option2026": "Elevate Plus",
+    "plan2027": "GEHA Indemnity Benefit Plan",
+    "option2027": "Elevate Plus Option",
+    "y2026": {
+      "plan": "GEHA Indemnity Benefit Plan",
+      "option": "Elevate Plus",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 529.89,
+      "biweeklyGovt": 324.76,
+      "biweeklyEmployee": 205.13,
+      "monthlyTotal": 1148.1,
+      "monthlyGovt": 703.65,
+      "monthlyEmployee": 444.45
+    },
+    "y2027": {
+      "plan": "GEHA Indemnity Benefit Plan",
+      "option": "Elevate Plus Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 614.67,
+      "biweeklyGovt": 352.04,
+      "biweeklyEmployee": 262.63,
+      "monthlyTotal": 1331.79,
+      "monthlyGovt": 762.75,
+      "monthlyEmployee": 569.04
+    }
+  },
+  {
+    "code": "252",
+    "plan": "GEHA Indemnity Benefit Plan",
+    "option": "Elevate Plus Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self & Family",
+    "plan2026": "GEHA Indemnity Benefit Plan",
+    "option2026": "Elevate Plus",
+    "plan2027": "GEHA Indemnity Benefit Plan",
+    "option2027": "Elevate Plus Option",
+    "y2026": {
+      "plan": "GEHA Indemnity Benefit Plan",
+      "option": "Elevate Plus",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 1274.15,
+      "biweeklyGovt": 778.03,
+      "biweeklyEmployee": 496.12,
+      "monthlyTotal": 2760.66,
+      "monthlyGovt": 1685.73,
+      "monthlyEmployee": 1074.93
+    },
+    "y2027": {
+      "plan": "GEHA Indemnity Benefit Plan",
+      "option": "Elevate Plus Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 1478.01,
+      "biweeklyGovt": 843.82,
+      "biweeklyEmployee": 634.19,
+      "monthlyTotal": 3202.36,
+      "monthlyGovt": 1828.28,
+      "monthlyEmployee": 1374.08
+    }
+  },
+  {
+    "code": "253",
+    "plan": "GEHA Indemnity Benefit Plan",
+    "option": "Elevate Plus Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self Plus One",
+    "plan2026": "GEHA Indemnity Benefit Plan",
+    "option2026": "Elevate Plus",
+    "plan2027": "GEHA Indemnity Benefit Plan",
+    "option2027": "Elevate Plus Option",
+    "y2026": {
+      "plan": "GEHA Indemnity Benefit Plan",
+      "option": "Elevate Plus",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 1160.75,
+      "biweeklyGovt": 711.17,
+      "biweeklyEmployee": 449.58,
+      "monthlyTotal": 2514.96,
+      "monthlyGovt": 1540.87,
+      "monthlyEmployee": 974.09
+    },
+    "y2027": {
+      "plan": "GEHA Indemnity Benefit Plan",
+      "option": "Elevate Plus Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 1346.48,
+      "biweeklyGovt": 767.53,
+      "biweeklyEmployee": 578.95,
+      "monthlyTotal": 2917.37,
+      "monthlyGovt": 1662.98,
+      "monthlyEmployee": 1254.39
+    }
+  },
+  {
+    "code": "254",
+    "plan": "GEHA Indemnity Benefit Plan",
+    "option": "Elevate Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self",
+    "plan2026": "GEHA Indemnity Benefit Plan",
+    "option2026": "Elevate",
+    "plan2027": "GEHA Indemnity Benefit Plan",
+    "option2027": "Elevate Option",
+    "y2026": {
+      "plan": "GEHA Indemnity Benefit Plan",
+      "option": "Elevate",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 311.69,
+      "biweeklyGovt": 233.77,
+      "biweeklyEmployee": 77.92,
+      "monthlyTotal": 675.33,
+      "monthlyGovt": 506.5,
+      "monthlyEmployee": 168.83
+    },
+    "y2027": {
+      "plan": "GEHA Indemnity Benefit Plan",
+      "option": "Elevate Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 311.69,
+      "biweeklyGovt": 233.77,
+      "biweeklyEmployee": 77.92,
+      "monthlyTotal": 675.33,
+      "monthlyGovt": 506.5,
+      "monthlyEmployee": 168.83
+    }
+  },
+  {
+    "code": "255",
+    "plan": "GEHA Indemnity Benefit Plan",
+    "option": "Elevate Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self & Family",
+    "plan2026": "GEHA Indemnity Benefit Plan",
+    "option2026": "Elevate",
+    "plan2027": "GEHA Indemnity Benefit Plan",
+    "option2027": "Elevate Option",
+    "y2026": {
+      "plan": "GEHA Indemnity Benefit Plan",
+      "option": "Elevate",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 915.42,
+      "biweeklyGovt": 686.57,
+      "biweeklyEmployee": 228.85,
+      "monthlyTotal": 1983.41,
+      "monthlyGovt": 1487.56,
+      "monthlyEmployee": 495.85
+    },
+    "y2027": {
+      "plan": "GEHA Indemnity Benefit Plan",
+      "option": "Elevate Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 915.42,
+      "biweeklyGovt": 686.57,
+      "biweeklyEmployee": 228.85,
+      "monthlyTotal": 1983.41,
+      "monthlyGovt": 1487.56,
+      "monthlyEmployee": 495.85
+    }
+  },
+  {
+    "code": "256",
+    "plan": "GEHA Indemnity Benefit Plan",
+    "option": "Elevate Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self Plus One",
+    "plan2026": "GEHA Indemnity Benefit Plan",
+    "option2026": "Elevate",
+    "plan2027": "GEHA Indemnity Benefit Plan",
+    "option2027": "Elevate Option",
+    "y2026": {
+      "plan": "GEHA Indemnity Benefit Plan",
+      "option": "Elevate",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 751.95,
+      "biweeklyGovt": 563.96,
+      "biweeklyEmployee": 187.99,
+      "monthlyTotal": 1629.23,
+      "monthlyGovt": 1221.92,
+      "monthlyEmployee": 407.31
+    },
+    "y2027": {
+      "plan": "GEHA Indemnity Benefit Plan",
+      "option": "Elevate Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 751.95,
+      "biweeklyGovt": 563.96,
+      "biweeklyEmployee": 187.99,
+      "monthlyTotal": 1629.23,
+      "monthlyGovt": 1221.92,
+      "monthlyEmployee": 407.31
+    }
+  },
+  {
+    "code": "311",
+    "plan": "GEHA",
+    "option": "High Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self",
+    "plan2026": "GEHA Benefit Plan",
+    "option2026": "High",
+    "plan2027": "GEHA",
+    "option2027": "High Option",
+    "y2026": {
+      "plan": "GEHA Benefit Plan",
+      "option": "High",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 520.05,
+      "biweeklyGovt": 324.76,
+      "biweeklyEmployee": 195.29,
+      "monthlyTotal": 1126.78,
+      "monthlyGovt": 703.65,
+      "monthlyEmployee": 423.13
+    },
+    "y2027": {
+      "plan": "GEHA",
+      "option": "High Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 520.05,
+      "biweeklyGovt": 352.04,
+      "biweeklyEmployee": 168.01,
+      "monthlyTotal": 1126.78,
+      "monthlyGovt": 762.75,
+      "monthlyEmployee": 364.03
+    }
+  },
+  {
+    "code": "312",
+    "plan": "GEHA",
+    "option": "High Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self & Family",
+    "plan2026": "GEHA Benefit Plan",
+    "option2026": "High",
+    "plan2027": "GEHA",
+    "option2027": "High Option",
+    "y2026": {
+      "plan": "GEHA Benefit Plan",
+      "option": "High",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 1303.21,
+      "biweeklyGovt": 778.03,
+      "biweeklyEmployee": 525.18,
+      "monthlyTotal": 2823.62,
+      "monthlyGovt": 1685.73,
+      "monthlyEmployee": 1137.89
+    },
+    "y2027": {
+      "plan": "GEHA",
+      "option": "High Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 1303.21,
+      "biweeklyGovt": 843.82,
+      "biweeklyEmployee": 459.39,
+      "monthlyTotal": 2823.62,
+      "monthlyGovt": 1828.28,
+      "monthlyEmployee": 995.34
+    }
+  },
+  {
+    "code": "313",
+    "plan": "GEHA",
+    "option": "High Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self Plus One",
+    "plan2026": "GEHA Benefit Plan",
+    "option2026": "High",
+    "plan2027": "GEHA",
+    "option2027": "High Option",
+    "y2026": {
+      "plan": "GEHA Benefit Plan",
+      "option": "High",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 1144.12,
+      "biweeklyGovt": 711.17,
+      "biweeklyEmployee": 432.95,
+      "monthlyTotal": 2478.93,
+      "monthlyGovt": 1540.87,
+      "monthlyEmployee": 938.06
+    },
+    "y2027": {
+      "plan": "GEHA",
+      "option": "High Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 1144.12,
+      "biweeklyGovt": 767.53,
+      "biweeklyEmployee": 376.59,
+      "monthlyTotal": 2478.93,
+      "monthlyGovt": 1662.98,
+      "monthlyEmployee": 815.95
+    }
+  },
+  {
+    "code": "314",
+    "plan": "GEHA",
+    "option": "Standard Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self",
+    "plan2026": "GEHA Benefit Plan",
+    "option2026": "Standard",
+    "plan2027": "GEHA",
+    "option2027": "Standard Option",
+    "y2026": {
+      "plan": "GEHA Benefit Plan",
+      "option": "Standard",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 346.99,
+      "biweeklyGovt": 260.24,
+      "biweeklyEmployee": 86.75,
+      "monthlyTotal": 751.81,
+      "monthlyGovt": 563.86,
+      "monthlyEmployee": 187.95
+    },
+    "y2027": {
+      "plan": "GEHA",
+      "option": "Standard Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 346.99,
+      "biweeklyGovt": 260.24,
+      "biweeklyEmployee": 86.75,
+      "monthlyTotal": 751.81,
+      "monthlyGovt": 563.86,
+      "monthlyEmployee": 187.95
+    }
+  },
+  {
+    "code": "315",
+    "plan": "GEHA",
+    "option": "Standard Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self & Family",
+    "plan2026": "GEHA Benefit Plan",
+    "option2026": "Standard",
+    "plan2027": "GEHA",
+    "option2027": "Standard Option",
+    "y2026": {
+      "plan": "GEHA Benefit Plan",
+      "option": "Standard",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 925.79,
+      "biweeklyGovt": 694.34,
+      "biweeklyEmployee": 231.45,
+      "monthlyTotal": 2005.88,
+      "monthlyGovt": 1504.41,
+      "monthlyEmployee": 501.47
+    },
+    "y2027": {
+      "plan": "GEHA",
+      "option": "Standard Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 925.79,
+      "biweeklyGovt": 694.34,
+      "biweeklyEmployee": 231.45,
+      "monthlyTotal": 2005.88,
+      "monthlyGovt": 1504.41,
+      "monthlyEmployee": 501.47
+    }
+  },
+  {
+    "code": "316",
+    "plan": "GEHA",
+    "option": "Standard Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self Plus One",
+    "plan2026": "GEHA Benefit Plan",
+    "option2026": "Standard",
+    "plan2027": "GEHA",
+    "option2027": "Standard Option",
+    "y2026": {
+      "plan": "GEHA Benefit Plan",
+      "option": "Standard",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 746.06,
+      "biweeklyGovt": 559.55,
+      "biweeklyEmployee": 186.51,
+      "monthlyTotal": 1616.46,
+      "monthlyGovt": 1212.35,
+      "monthlyEmployee": 404.11
+    },
+    "y2027": {
+      "plan": "GEHA",
+      "option": "Standard Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 746.06,
+      "biweeklyGovt": 559.55,
+      "biweeklyEmployee": 186.51,
+      "monthlyTotal": 1616.46,
+      "monthlyGovt": 1212.35,
+      "monthlyEmployee": 404.11
+    }
+  },
+  {
+    "code": "341",
+    "plan": "GEHA",
+    "option": "HDHP",
+    "location": "Nationwide",
+    "enrollmentType": "Self",
+    "plan2026": "GEHA HDHP",
+    "option2026": "HDHP",
+    "plan2027": "GEHA",
+    "option2027": "HDHP",
+    "y2026": {
+      "plan": "GEHA HDHP",
+      "option": "HDHP",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 326.47,
+      "biweeklyGovt": 244.85,
+      "biweeklyEmployee": 81.62,
+      "monthlyTotal": 707.35,
+      "monthlyGovt": 530.51,
+      "monthlyEmployee": 176.84
+    },
+    "y2027": {
+      "plan": "GEHA",
+      "option": "HDHP",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 326.47,
+      "biweeklyGovt": 244.85,
+      "biweeklyEmployee": 81.62,
+      "monthlyTotal": 707.35,
+      "monthlyGovt": 530.51,
+      "monthlyEmployee": 176.84
+    }
+  },
+  {
+    "code": "342",
+    "plan": "GEHA",
+    "option": "HDHP",
+    "location": "Nationwide",
+    "enrollmentType": "Self & Family",
+    "plan2026": "GEHA HDHP",
+    "option2026": "HDHP",
+    "plan2027": "GEHA",
+    "option2027": "HDHP",
+    "y2026": {
+      "plan": "GEHA HDHP",
+      "option": "HDHP",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 862.51,
+      "biweeklyGovt": 646.88,
+      "biweeklyEmployee": 215.63,
+      "monthlyTotal": 1868.77,
+      "monthlyGovt": 1401.58,
+      "monthlyEmployee": 467.19
+    },
+    "y2027": {
+      "plan": "GEHA",
+      "option": "HDHP",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 862.51,
+      "biweeklyGovt": 646.88,
+      "biweeklyEmployee": 215.63,
+      "monthlyTotal": 1868.77,
+      "monthlyGovt": 1401.58,
+      "monthlyEmployee": 467.19
+    }
+  },
+  {
+    "code": "343",
+    "plan": "GEHA",
+    "option": "HDHP",
+    "location": "Nationwide",
+    "enrollmentType": "Self Plus One",
+    "plan2026": "GEHA HDHP",
+    "option2026": "HDHP",
+    "plan2027": "GEHA",
+    "option2027": "HDHP",
+    "y2026": {
+      "plan": "GEHA HDHP",
+      "option": "HDHP",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 701.88,
+      "biweeklyGovt": 526.41,
+      "biweeklyEmployee": 175.47,
+      "monthlyTotal": 1520.74,
+      "monthlyGovt": 1140.56,
+      "monthlyEmployee": 380.18
+    },
+    "y2027": {
+      "plan": "GEHA",
+      "option": "HDHP",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 701.88,
+      "biweeklyGovt": 526.41,
+      "biweeklyEmployee": 175.47,
+      "monthlyTotal": 1520.74,
+      "monthlyGovt": 1140.56,
+      "monthlyEmployee": 380.18
+    }
+  },
+  {
+    "code": "401",
+    "plan": "Foreign Service Benefit Plan",
+    "option": "High Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self",
+    "plan2026": "Foreign Service Benefit Plan",
+    "option2026": "High",
+    "plan2027": "Foreign Service Benefit Plan",
+    "option2027": "High Option",
+    "y2026": {
+      "plan": "Foreign Service Benefit Plan",
+      "option": "High",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 401.45,
+      "biweeklyGovt": 301.09,
+      "biweeklyEmployee": 100.36,
+      "monthlyTotal": 869.81,
+      "monthlyGovt": 652.36,
+      "monthlyEmployee": 217.45
+    },
+    "y2027": {
+      "plan": "Foreign Service Benefit Plan",
+      "option": "High Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 495.79,
+      "biweeklyGovt": 352.04,
+      "biweeklyEmployee": 143.75,
+      "monthlyTotal": 1074.21,
+      "monthlyGovt": 762.75,
+      "monthlyEmployee": 311.46
+    }
+  },
+  {
+    "code": "402",
+    "plan": "Foreign Service Benefit Plan",
+    "option": "High Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self & Family",
+    "plan2026": "Foreign Service Benefit Plan",
+    "option2026": "High",
+    "plan2027": "Foreign Service Benefit Plan",
+    "option2027": "High Option",
+    "y2026": {
+      "plan": "Foreign Service Benefit Plan",
+      "option": "High",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 993.1,
+      "biweeklyGovt": 744.83,
+      "biweeklyEmployee": 248.27,
+      "monthlyTotal": 2151.72,
+      "monthlyGovt": 1613.79,
+      "monthlyEmployee": 537.93
+    },
+    "y2027": {
+      "plan": "Foreign Service Benefit Plan",
+      "option": "High Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 1226.47,
+      "biweeklyGovt": 843.82,
+      "biweeklyEmployee": 382.65,
+      "monthlyTotal": 2657.35,
+      "monthlyGovt": 1828.28,
+      "monthlyEmployee": 829.07
+    }
+  },
+  {
+    "code": "403",
+    "plan": "Foreign Service Benefit Plan",
+    "option": "High Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self Plus One",
+    "plan2026": "Foreign Service Benefit Plan",
+    "option2026": "High",
+    "plan2027": "Foreign Service Benefit Plan",
+    "option2027": "High Option",
+    "y2026": {
+      "plan": "Foreign Service Benefit Plan",
+      "option": "High",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 969.13,
+      "biweeklyGovt": 711.17,
+      "biweeklyEmployee": 257.96,
+      "monthlyTotal": 2099.78,
+      "monthlyGovt": 1540.87,
+      "monthlyEmployee": 558.91
+    },
+    "y2027": {
+      "plan": "Foreign Service Benefit Plan",
+      "option": "High Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 1196.88,
+      "biweeklyGovt": 767.53,
+      "biweeklyEmployee": 429.35,
+      "monthlyTotal": 2593.24,
+      "monthlyGovt": 1662.98,
+      "monthlyEmployee": 930.26
+    }
+  },
+  {
+    "code": "414",
+    "plan": "MHBP Value Plan",
+    "option": "Value",
+    "location": "Nationwide",
+    "enrollmentType": "Self",
+    "plan2026": "MHBP Value Plan",
+    "option2026": "Value",
+    "plan2027": null,
+    "option2027": null,
+    "y2026": {
+      "plan": "MHBP Value Plan",
+      "option": "Value",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 271.19,
+      "biweeklyGovt": 203.39,
+      "biweeklyEmployee": 67.8,
+      "monthlyTotal": 587.58,
+      "monthlyGovt": 440.69,
+      "monthlyEmployee": 146.89
+    },
+    "y2027": null
+  },
+  {
+    "code": "415",
+    "plan": "MHBP Value Plan",
+    "option": "Value",
+    "location": "Nationwide",
+    "enrollmentType": "Self & Family",
+    "plan2026": "MHBP Value Plan",
+    "option2026": "Value",
+    "plan2027": null,
+    "option2027": null,
+    "y2026": {
+      "plan": "MHBP Value Plan",
+      "option": "Value",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 655.39,
+      "biweeklyGovt": 491.54,
+      "biweeklyEmployee": 163.85,
+      "monthlyTotal": 1420.01,
+      "monthlyGovt": 1065.01,
+      "monthlyEmployee": 355.0
+    },
+    "y2027": null
+  },
+  {
+    "code": "416",
+    "plan": "MHBP Value Plan",
+    "option": "Value",
+    "location": "Nationwide",
+    "enrollmentType": "Self Plus One",
+    "plan2026": "MHBP Value Plan",
+    "option2026": "Value",
+    "plan2027": null,
+    "option2027": null,
+    "y2026": {
+      "plan": "MHBP Value Plan",
+      "option": "Value",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 642.56,
+      "biweeklyGovt": 481.92,
+      "biweeklyEmployee": 160.64,
+      "monthlyTotal": 1392.21,
+      "monthlyGovt": 1044.16,
+      "monthlyEmployee": 348.05
+    },
+    "y2027": null
+  },
+  {
+    "code": "421",
+    "plan": "Compass Rose Health Plan",
+    "option": "High Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self",
+    "plan2026": "Compass Rose Health Plan",
+    "option2026": "High",
+    "plan2027": "Compass Rose Health Plan",
+    "option2027": "High Option",
+    "y2026": {
+      "plan": "Compass Rose Health Plan",
+      "option": "High",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 464.82,
+      "biweeklyGovt": 324.76,
+      "biweeklyEmployee": 140.06,
+      "monthlyTotal": 1007.11,
+      "monthlyGovt": 703.65,
+      "monthlyEmployee": 303.46
+    },
+    "y2027": {
+      "plan": "Compass Rose Health Plan",
+      "option": "High Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 502.01,
+      "biweeklyGovt": 352.04,
+      "biweeklyEmployee": 149.97,
+      "monthlyTotal": 1087.69,
+      "monthlyGovt": 762.75,
+      "monthlyEmployee": 324.94
+    }
+  },
+  {
+    "code": "422",
+    "plan": "Compass Rose Health Plan",
+    "option": "High Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self & Family",
+    "plan2026": "Compass Rose Health Plan",
+    "option2026": "High",
+    "plan2027": "Compass Rose Health Plan",
+    "option2027": "High Option",
+    "y2026": {
+      "plan": "Compass Rose Health Plan",
+      "option": "High",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 1115.6,
+      "biweeklyGovt": 778.03,
+      "biweeklyEmployee": 337.57,
+      "monthlyTotal": 2417.13,
+      "monthlyGovt": 1685.73,
+      "monthlyEmployee": 731.4
+    },
+    "y2027": {
+      "plan": "Compass Rose Health Plan",
+      "option": "High Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 1204.85,
+      "biweeklyGovt": 843.82,
+      "biweeklyEmployee": 361.03,
+      "monthlyTotal": 2610.51,
+      "monthlyGovt": 1828.28,
+      "monthlyEmployee": 782.23
+    }
+  },
+  {
+    "code": "423",
+    "plan": "Compass Rose Health Plan",
+    "option": "High Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self Plus One",
+    "plan2026": "Compass Rose Health Plan",
+    "option2026": "High",
+    "plan2027": "Compass Rose Health Plan",
+    "option2027": "High Option",
+    "y2026": {
+      "plan": "Compass Rose Health Plan",
+      "option": "High",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 1022.61,
+      "biweeklyGovt": 711.17,
+      "biweeklyEmployee": 311.44,
+      "monthlyTotal": 2215.66,
+      "monthlyGovt": 1540.87,
+      "monthlyEmployee": 674.79
+    },
+    "y2027": {
+      "plan": "Compass Rose Health Plan",
+      "option": "High Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 1104.42,
+      "biweeklyGovt": 767.53,
+      "biweeklyEmployee": 336.89,
+      "monthlyTotal": 2392.91,
+      "monthlyGovt": 1662.98,
+      "monthlyEmployee": 729.93
+    }
+  },
+  {
+    "code": "424",
+    "plan": "Compass Rose Health Plan",
+    "option": "Standard Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self",
+    "plan2026": "Compass Rose Health Plan",
+    "option2026": "Standard",
+    "plan2027": "Compass Rose Health Plan",
+    "option2027": "Standard Option",
+    "y2026": {
+      "plan": "Compass Rose Health Plan",
+      "option": "Standard",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 246.56,
+      "biweeklyGovt": 184.92,
+      "biweeklyEmployee": 61.64,
+      "monthlyTotal": 534.21,
+      "monthlyGovt": 400.66,
+      "monthlyEmployee": 133.55
+    },
+    "y2027": {
+      "plan": "Compass Rose Health Plan",
+      "option": "Standard Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 276.15,
+      "biweeklyGovt": 207.11,
+      "biweeklyEmployee": 69.04,
+      "monthlyTotal": 598.33,
+      "monthlyGovt": 448.75,
+      "monthlyEmployee": 149.58
+    }
+  },
+  {
+    "code": "425",
+    "plan": "Compass Rose Health Plan",
+    "option": "Standard Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self & Family",
+    "plan2026": "Compass Rose Health Plan",
+    "option2026": "Standard",
+    "plan2027": "Compass Rose Health Plan",
+    "option2027": "Standard Option",
+    "y2026": {
+      "plan": "Compass Rose Health Plan",
+      "option": "Standard",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 591.77,
+      "biweeklyGovt": 443.83,
+      "biweeklyEmployee": 147.94,
+      "monthlyTotal": 1282.17,
+      "monthlyGovt": 961.63,
+      "monthlyEmployee": 320.54
+    },
+    "y2027": {
+      "plan": "Compass Rose Health Plan",
+      "option": "Standard Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 662.78,
+      "biweeklyGovt": 497.09,
+      "biweeklyEmployee": 165.69,
+      "monthlyTotal": 1436.02,
+      "monthlyGovt": 1077.02,
+      "monthlyEmployee": 359.0
+    }
+  },
+  {
+    "code": "426",
+    "plan": "Compass Rose Health Plan",
+    "option": "Standard Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self Plus One",
+    "plan2026": "Compass Rose Health Plan",
+    "option2026": "Standard",
+    "plan2027": "Compass Rose Health Plan",
+    "option2027": "Standard Option",
+    "y2026": {
+      "plan": "Compass Rose Health Plan",
+      "option": "Standard",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 542.45,
+      "biweeklyGovt": 406.84,
+      "biweeklyEmployee": 135.61,
+      "monthlyTotal": 1175.31,
+      "monthlyGovt": 881.48,
+      "monthlyEmployee": 293.83
+    },
+    "y2027": {
+      "plan": "Compass Rose Health Plan",
+      "option": "Standard Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 607.55,
+      "biweeklyGovt": 455.66,
+      "biweeklyEmployee": 151.89,
+      "monthlyTotal": 1316.36,
+      "monthlyGovt": 987.27,
+      "monthlyEmployee": 329.09
+    }
+  },
+  {
+    "code": "431",
+    "plan": "Panama Canal Area Benefit Plan",
+    "option": "FFS Plan with a POS Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self",
+    "plan2026": "Panama Canal Area Benefit Plan",
+    "option2026": "High",
+    "plan2027": "Panama Canal Area Benefit Plan",
+    "option2027": "FFS Plan with a POS Option",
+    "y2026": {
+      "plan": "Panama Canal Area Benefit Plan",
+      "option": "High",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 630.34,
+      "biweeklyGovt": 324.76,
+      "biweeklyEmployee": 305.58,
+      "monthlyTotal": 1365.74,
+      "monthlyGovt": 703.65,
+      "monthlyEmployee": 662.09
+    },
+    "y2027": {
+      "plan": "Panama Canal Area Benefit Plan",
+      "option": "FFS Plan with a POS Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 608.29,
+      "biweeklyGovt": 352.04,
+      "biweeklyEmployee": 256.25,
+      "monthlyTotal": 1317.96,
+      "monthlyGovt": 762.75,
+      "monthlyEmployee": 555.21
+    }
+  },
+  {
+    "code": "432",
+    "plan": "Panama Canal Area Benefit Plan",
+    "option": "FFS Plan with a POS Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self & Family",
+    "plan2026": "Panama Canal Area Benefit Plan",
+    "option2026": "High",
+    "plan2027": "Panama Canal Area Benefit Plan",
+    "option2027": "FFS Plan with a POS Option",
+    "y2026": {
+      "plan": "Panama Canal Area Benefit Plan",
+      "option": "High",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 1328.08,
+      "biweeklyGovt": 778.03,
+      "biweeklyEmployee": 550.05,
+      "monthlyTotal": 2877.51,
+      "monthlyGovt": 1685.73,
+      "monthlyEmployee": 1191.78
+    },
+    "y2027": {
+      "plan": "Panama Canal Area Benefit Plan",
+      "option": "FFS Plan with a POS Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 1281.6,
+      "biweeklyGovt": 843.82,
+      "biweeklyEmployee": 437.78,
+      "monthlyTotal": 2776.8,
+      "monthlyGovt": 1828.28,
+      "monthlyEmployee": 948.52
+    }
+  },
+  {
+    "code": "433",
+    "plan": "Panama Canal Area Benefit Plan",
+    "option": "FFS Plan with a POS Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self Plus One",
+    "plan2026": "Panama Canal Area Benefit Plan",
+    "option2026": "High",
+    "plan2027": "Panama Canal Area Benefit Plan",
+    "option2027": "FFS Plan with a POS Option",
+    "y2026": {
+      "plan": "Panama Canal Area Benefit Plan",
+      "option": "High",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 1269.85,
+      "biweeklyGovt": 711.17,
+      "biweeklyEmployee": 558.68,
+      "monthlyTotal": 2751.34,
+      "monthlyGovt": 1540.87,
+      "monthlyEmployee": 1210.47
+    },
+    "y2027": {
+      "plan": "Panama Canal Area Benefit Plan",
+      "option": "FFS Plan with a POS Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 1225.4,
+      "biweeklyGovt": 767.53,
+      "biweeklyEmployee": 457.87,
+      "monthlyTotal": 2655.03,
+      "monthlyGovt": 1662.98,
+      "monthlyEmployee": 992.05
+    }
+  },
+  {
+    "code": "441",
+    "plan": "SAMBA",
+    "option": "High",
+    "location": "Nationwide",
+    "enrollmentType": "Self",
+    "plan2026": "SAMBA Health Benefit Plan",
+    "option2026": "High",
+    "plan2027": "SAMBA",
+    "option2027": "High",
+    "y2026": {
+      "plan": "SAMBA Health Benefit Plan",
+      "option": "High",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 550.85,
+      "biweeklyGovt": 324.76,
+      "biweeklyEmployee": 226.09,
+      "monthlyTotal": 1193.51,
+      "monthlyGovt": 703.65,
+      "monthlyEmployee": 489.86
+    },
+    "y2027": {
+      "plan": "SAMBA",
+      "option": "High",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 661.02,
+      "biweeklyGovt": 352.04,
+      "biweeklyEmployee": 308.98,
+      "monthlyTotal": 1432.21,
+      "monthlyGovt": 762.75,
+      "monthlyEmployee": 669.46
+    }
+  },
+  {
+    "code": "442",
+    "plan": "SAMBA",
+    "option": "High",
+    "location": "Nationwide",
+    "enrollmentType": "Self & Family",
+    "plan2026": "SAMBA Health Benefit Plan",
+    "option2026": "High",
+    "plan2027": "SAMBA",
+    "option2027": "High",
+    "y2026": {
+      "plan": "SAMBA Health Benefit Plan",
+      "option": "High",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 1322.08,
+      "biweeklyGovt": 778.03,
+      "biweeklyEmployee": 544.05,
+      "monthlyTotal": 2864.51,
+      "monthlyGovt": 1685.73,
+      "monthlyEmployee": 1178.78
+    },
+    "y2027": {
+      "plan": "SAMBA",
+      "option": "High",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 1586.5,
+      "biweeklyGovt": 843.82,
+      "biweeklyEmployee": 742.68,
+      "monthlyTotal": 3437.42,
+      "monthlyGovt": 1828.28,
+      "monthlyEmployee": 1609.14
+    }
+  },
+  {
+    "code": "443",
+    "plan": "SAMBA",
+    "option": "High",
+    "location": "Nationwide",
+    "enrollmentType": "Self Plus One",
+    "plan2026": "SAMBA Health Benefit Plan",
+    "option2026": "High",
+    "plan2027": "SAMBA",
+    "option2027": "High",
+    "y2026": {
+      "plan": "SAMBA Health Benefit Plan",
+      "option": "High",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 1211.9,
+      "biweeklyGovt": 711.17,
+      "biweeklyEmployee": 500.73,
+      "monthlyTotal": 2625.78,
+      "monthlyGovt": 1540.87,
+      "monthlyEmployee": 1084.91
+    },
+    "y2027": {
+      "plan": "SAMBA",
+      "option": "High",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 1454.28,
+      "biweeklyGovt": 767.53,
+      "biweeklyEmployee": 686.75,
+      "monthlyTotal": 3150.94,
+      "monthlyGovt": 1662.98,
+      "monthlyEmployee": 1487.96
+    }
+  },
+  {
+    "code": "444",
+    "plan": "SAMBA",
+    "option": "Standard",
+    "location": "Nationwide",
+    "enrollmentType": "Self",
+    "plan2026": "SAMBA Health Benefit Plan",
+    "option2026": "Standard",
+    "plan2027": "SAMBA",
+    "option2027": "Standard",
+    "y2026": {
+      "plan": "SAMBA Health Benefit Plan",
+      "option": "Standard",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 447.62,
+      "biweeklyGovt": 324.76,
+      "biweeklyEmployee": 122.86,
+      "monthlyTotal": 969.84,
+      "monthlyGovt": 703.65,
+      "monthlyEmployee": 266.19
+    },
+    "y2027": {
+      "plan": "SAMBA",
+      "option": "Standard",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 487.91,
+      "biweeklyGovt": 352.04,
+      "biweeklyEmployee": 135.87,
+      "monthlyTotal": 1057.14,
+      "monthlyGovt": 762.75,
+      "monthlyEmployee": 294.39
+    }
+  },
+  {
+    "code": "445",
+    "plan": "SAMBA",
+    "option": "Standard",
+    "location": "Nationwide",
+    "enrollmentType": "Self & Family",
+    "plan2026": "SAMBA Health Benefit Plan",
+    "option2026": "Standard",
+    "plan2027": "SAMBA",
+    "option2027": "Standard",
+    "y2026": {
+      "plan": "SAMBA Health Benefit Plan",
+      "option": "Standard",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 1029.94,
+      "biweeklyGovt": 772.46,
+      "biweeklyEmployee": 257.48,
+      "monthlyTotal": 2231.54,
+      "monthlyGovt": 1673.66,
+      "monthlyEmployee": 557.88
+    },
+    "y2027": {
+      "plan": "SAMBA",
+      "option": "Standard",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 1122.64,
+      "biweeklyGovt": 841.98,
+      "biweeklyEmployee": 280.66,
+      "monthlyTotal": 2432.39,
+      "monthlyGovt": 1824.29,
+      "monthlyEmployee": 608.1
+    }
+  },
+  {
+    "code": "446",
+    "plan": "SAMBA",
+    "option": "Standard",
+    "location": "Nationwide",
+    "enrollmentType": "Self Plus One",
+    "plan2026": "SAMBA Health Benefit Plan",
+    "option2026": "Standard",
+    "plan2027": "SAMBA",
+    "option2027": "Standard",
+    "y2026": {
+      "plan": "SAMBA Health Benefit Plan",
+      "option": "Standard",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 946.94,
+      "biweeklyGovt": 710.21,
+      "biweeklyEmployee": 236.73,
+      "monthlyTotal": 2051.7,
+      "monthlyGovt": 1538.78,
+      "monthlyEmployee": 512.92
+    },
+    "y2027": {
+      "plan": "SAMBA",
+      "option": "Standard",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 1032.17,
+      "biweeklyGovt": 767.53,
+      "biweeklyEmployee": 264.64,
+      "monthlyTotal": 2236.37,
+      "monthlyGovt": 1662.98,
+      "monthlyEmployee": 573.39
+    }
+  },
+  {
+    "code": "454",
+    "plan": "MHBP",
+    "option": "Standard Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self",
+    "plan2026": "MHBP Standard Option",
+    "option2026": "Standard",
+    "plan2027": "MHBP",
+    "option2027": "Standard Option",
+    "y2026": {
+      "plan": "MHBP Standard Option",
+      "option": "Standard",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 375.58,
+      "biweeklyGovt": 281.69,
+      "biweeklyEmployee": 93.89,
+      "monthlyTotal": 813.76,
+      "monthlyGovt": 610.32,
+      "monthlyEmployee": 203.44
+    },
+    "y2027": {
+      "plan": "MHBP",
+      "option": "Standard Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 505.15,
+      "biweeklyGovt": 352.04,
+      "biweeklyEmployee": 153.11,
+      "monthlyTotal": 1094.49,
+      "monthlyGovt": 762.75,
+      "monthlyEmployee": 331.74
+    }
+  },
+  {
+    "code": "455",
+    "plan": "MHBP",
+    "option": "Standard Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self & Family",
+    "plan2026": "MHBP Standard Option",
+    "option2026": "Standard",
+    "plan2027": "MHBP",
+    "option2027": "Standard Option",
+    "y2026": {
+      "plan": "MHBP Standard Option",
+      "option": "Standard",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 872.79,
+      "biweeklyGovt": 654.59,
+      "biweeklyEmployee": 218.2,
+      "monthlyTotal": 1891.05,
+      "monthlyGovt": 1418.29,
+      "monthlyEmployee": 472.76
+    },
+    "y2027": {
+      "plan": "MHBP",
+      "option": "Standard Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 1244.6,
+      "biweeklyGovt": 843.82,
+      "biweeklyEmployee": 400.78,
+      "monthlyTotal": 2696.63,
+      "monthlyGovt": 1828.28,
+      "monthlyEmployee": 868.35
+    }
+  },
+  {
+    "code": "456",
+    "plan": "MHBP",
+    "option": "Standard Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self Plus One",
+    "plan2026": "MHBP Standard Option",
+    "option2026": "Standard",
+    "plan2027": "MHBP",
+    "option2027": "Standard Option",
+    "y2026": {
+      "plan": "MHBP Standard Option",
+      "option": "Standard",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 864.5,
+      "biweeklyGovt": 648.38,
+      "biweeklyEmployee": 216.12,
+      "monthlyTotal": 1873.08,
+      "monthlyGovt": 1404.81,
+      "monthlyEmployee": 468.27
+    },
+    "y2027": {
+      "plan": "MHBP",
+      "option": "Standard Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 1210.3,
+      "biweeklyGovt": 767.53,
+      "biweeklyEmployee": 442.77,
+      "monthlyTotal": 2622.32,
+      "monthlyGovt": 1662.98,
+      "monthlyEmployee": 959.34
+    }
+  },
+  {
+    "code": "471",
+    "plan": "APWU Health Plan",
+    "option": "High Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self",
+    "plan2026": "APWU Health Plan",
+    "option2026": "High",
+    "plan2027": "APWU Health Plan",
+    "option2027": "High Option",
+    "y2026": {
+      "plan": "APWU Health Plan",
+      "option": "High",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 464.92,
+      "biweeklyGovt": 324.76,
+      "biweeklyEmployee": 140.16,
+      "monthlyTotal": 1007.33,
+      "monthlyGovt": 703.65,
+      "monthlyEmployee": 303.68
+    },
+    "y2027": {
+      "plan": "APWU Health Plan",
+      "option": "High Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 543.96,
+      "biweeklyGovt": 352.04,
+      "biweeklyEmployee": 191.92,
+      "monthlyTotal": 1178.58,
+      "monthlyGovt": 762.75,
+      "monthlyEmployee": 415.83
+    }
+  },
+  {
+    "code": "472",
+    "plan": "APWU Health Plan",
+    "option": "High Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self & Family",
+    "plan2026": "APWU Health Plan",
+    "option2026": "High",
+    "plan2027": "APWU Health Plan",
+    "option2027": "High Option",
+    "y2026": {
+      "plan": "APWU Health Plan",
+      "option": "High",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 1115.75,
+      "biweeklyGovt": 778.03,
+      "biweeklyEmployee": 337.72,
+      "monthlyTotal": 2417.46,
+      "monthlyGovt": 1685.73,
+      "monthlyEmployee": 731.73
+    },
+    "y2027": {
+      "plan": "APWU Health Plan",
+      "option": "High Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 1305.43,
+      "biweeklyGovt": 843.82,
+      "biweeklyEmployee": 461.61,
+      "monthlyTotal": 2828.43,
+      "monthlyGovt": 1828.28,
+      "monthlyEmployee": 1000.15
+    }
+  },
+  {
+    "code": "473",
+    "plan": "APWU Health Plan",
+    "option": "High Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self Plus One",
+    "plan2026": "APWU Health Plan",
+    "option2026": "High",
+    "plan2027": "APWU Health Plan",
+    "option2027": "High Option",
+    "y2026": {
+      "plan": "APWU Health Plan",
+      "option": "High",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 976.28,
+      "biweeklyGovt": 711.17,
+      "biweeklyEmployee": 265.11,
+      "monthlyTotal": 2115.27,
+      "monthlyGovt": 1540.87,
+      "monthlyEmployee": 574.4
+    },
+    "y2027": {
+      "plan": "APWU Health Plan",
+      "option": "High Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 1142.24,
+      "biweeklyGovt": 767.53,
+      "biweeklyEmployee": 374.71,
+      "monthlyTotal": 2474.85,
+      "monthlyGovt": 1662.98,
+      "monthlyEmployee": 811.87
+    }
+  },
+  {
+    "code": "474",
+    "plan": "APWU Health Plan",
+    "option": "Consumer Driven Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self",
+    "plan2026": "APWU Health Plan",
+    "option2026": "CDHP",
+    "plan2027": "APWU Health Plan",
+    "option2027": "Consumer Driven Option",
+    "y2026": {
+      "plan": "APWU Health Plan",
+      "option": "CDHP",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 402.47,
+      "biweeklyGovt": 301.85,
+      "biweeklyEmployee": 100.62,
+      "monthlyTotal": 872.02,
+      "monthlyGovt": 654.02,
+      "monthlyEmployee": 218.0
+    },
+    "y2027": {
+      "plan": "APWU Health Plan",
+      "option": "Consumer Driven Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 410.52,
+      "biweeklyGovt": 307.89,
+      "biweeklyEmployee": 102.63,
+      "monthlyTotal": 889.46,
+      "monthlyGovt": 667.1,
+      "monthlyEmployee": 222.36
+    }
+  },
+  {
+    "code": "475",
+    "plan": "APWU Health Plan",
+    "option": "Consumer Driven Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self & Family",
+    "plan2026": "APWU Health Plan",
+    "option2026": "CDHP",
+    "plan2027": "APWU Health Plan",
+    "option2027": "Consumer Driven Option",
+    "y2026": {
+      "plan": "APWU Health Plan",
+      "option": "CDHP",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 954.26,
+      "biweeklyGovt": 715.7,
+      "biweeklyEmployee": 238.56,
+      "monthlyTotal": 2067.56,
+      "monthlyGovt": 1550.67,
+      "monthlyEmployee": 516.89
+    },
+    "y2027": {
+      "plan": "APWU Health Plan",
+      "option": "Consumer Driven Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 973.35,
+      "biweeklyGovt": 730.01,
+      "biweeklyEmployee": 243.34,
+      "monthlyTotal": 2108.93,
+      "monthlyGovt": 1581.7,
+      "monthlyEmployee": 527.23
+    }
+  },
+  {
+    "code": "476",
+    "plan": "APWU Health Plan",
+    "option": "Consumer Driven Option",
+    "location": "Nationwide",
+    "enrollmentType": "Self Plus One",
+    "plan2026": "APWU Health Plan",
+    "option2026": "CDHP",
+    "plan2027": "APWU Health Plan",
+    "option2027": "Consumer Driven Option",
+    "y2026": {
+      "plan": "APWU Health Plan",
+      "option": "CDHP",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 874.73,
+      "biweeklyGovt": 656.05,
+      "biweeklyEmployee": 218.68,
+      "monthlyTotal": 1895.25,
+      "monthlyGovt": 1421.44,
+      "monthlyEmployee": 473.81
+    },
+    "y2027": {
+      "plan": "APWU Health Plan",
+      "option": "Consumer Driven Option",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 892.23,
+      "biweeklyGovt": 669.17,
+      "biweeklyEmployee": 223.06,
+      "monthlyTotal": 1933.17,
+      "monthlyGovt": 1449.88,
+      "monthlyEmployee": 483.29
+    }
+  },
+  {
+    "code": "481",
+    "plan": "MHBP Consumer Option",
+    "option": "HDHP",
+    "location": "Nationwide",
+    "enrollmentType": "Self",
+    "plan2026": "MHBP Consumer Option",
+    "option2026": "HDHP",
+    "plan2027": null,
+    "option2027": null,
+    "y2026": {
+      "plan": "MHBP Consumer Option",
+      "option": "HDHP",
+      "location": "Nationwide",
+      "enrollmentType": "Self",
+      "biweeklyTotal": 383.95,
+      "biweeklyGovt": 287.96,
+      "biweeklyEmployee": 95.99,
+      "monthlyTotal": 831.89,
+      "monthlyGovt": 623.92,
+      "monthlyEmployee": 207.97
+    },
+    "y2027": null
+  },
+  {
+    "code": "482",
+    "plan": "MHBP Consumer Option",
+    "option": "HDHP",
+    "location": "Nationwide",
+    "enrollmentType": "Self & Family",
+    "plan2026": "MHBP Consumer Option",
+    "option2026": "HDHP",
+    "plan2027": null,
+    "option2027": null,
+    "y2026": {
+      "plan": "MHBP Consumer Option",
+      "option": "HDHP",
+      "location": "Nationwide",
+      "enrollmentType": "Self & Family",
+      "biweeklyTotal": 892.15,
+      "biweeklyGovt": 669.11,
+      "biweeklyEmployee": 223.04,
+      "monthlyTotal": 1932.99,
+      "monthlyGovt": 1449.74,
+      "monthlyEmployee": 483.25
+    },
+    "y2027": null
+  },
+  {
+    "code": "483",
+    "plan": "MHBP Consumer Option",
+    "option": "HDHP",
+    "location": "Nationwide",
+    "enrollmentType": "Self Plus One",
+    "plan2026": "MHBP Consumer Option",
+    "option2026": "HDHP",
+    "plan2027": null,
+    "option2027": null,
+    "y2026": {
+      "plan": "MHBP Consumer Option",
+      "option": "HDHP",
+      "location": "Nationwide",
+      "enrollmentType": "Self Plus One",
+      "biweeklyTotal": 849.69,
+      "biweeklyGovt": 637.27,
+      "biweeklyEmployee": 212.42,
+      "monthlyTotal": 1841.0,
+      "monthlyGovt": 1380.75,
+      "monthlyEmployee": 460.25
+    },
+    "y2027": null
+  }
+];
+
+</script>
+  <script>
+(() => {
+  "use strict";
+
+  const data = Array.isArray(window.FEHB_DATA) ? window.FEHB_DATA : [];
+  const byCode = new Map(data.map(item => [String(item.code).toUpperCase(), item]));
+
+  const form = document.getElementById("lookup-form");
+  const input = document.getElementById("enrollment-code");
+  const datalist = document.getElementById("code-list");
+  const message = document.getElementById("message");
+  const result = document.getElementById("result");
+  const directoryBody = document.getElementById("directory-body");
+  const directorySearch = document.getElementById("directory-search");
+  const directoryCount = document.getElementById("directory-count");
+  const directoryEmpty = document.getElementById("directory-empty");
+
+  const money = value => value == null ? "—" : new Intl.NumberFormat("en-US", {
+    style: "currency", currency: "USD"
+  }).format(value);
+
+  const pct = (oldValue, newValue) => {
+    if (oldValue == null || newValue == null || oldValue === 0) return "—";
+    const change = ((newValue - oldValue) / oldValue) * 100;
+    return `${change >= 0 ? "+" : ""}${change.toFixed(2)}%`;
+  };
+
+  const delta = (oldValue, newValue) => {
+    if (oldValue == null || newValue == null) return "—";
+    const d = newValue - oldValue;
+    return `${d >= 0 ? "+" : "−"}${money(Math.abs(d))}`;
+  };
+
+  const cleanCode = value => String(value || "")
+    .trim()
+    .toUpperCase()
+    .replace(/\s+/g, "");
+
+  function addOption(item) {
+    const option = document.createElement("option");
+    option.value = item.code;
+    option.label = `${item.plan} — ${item.option} — ${item.enrollmentType}`;
+    datalist.appendChild(option);
+  }
+  const current2027 = data
+    .filter(item => item.y2027)
+    .sort((a, b) =>
+      a.plan.localeCompare(b.plan) ||
+      a.option.localeCompare(b.option) ||
+      a.enrollmentType.localeCompare(b.enrollmentType) ||
+      a.code.localeCompare(b.code)
+    );
+
+  current2027.forEach(addOption);
+
+  function renderDirectory(query = "") {
+    const needle = String(query || "").trim().toLowerCase();
+    const matches = current2027.filter(item => {
+      const haystack = [item.code, item.plan, item.option, item.enrollmentType, item.location]
+        .join(" ")
+        .toLowerCase();
+      return !needle || haystack.includes(needle);
+    });
+
+    directoryBody.innerHTML = matches.map(item => `
+      <tr>
+        <td><button type="button" class="code-link" data-code="${item.code}" aria-label="Compare enrollment code ${item.code}">${item.code}</button></td>
+        <td><strong>${item.plan}</strong></td>
+        <td>${item.option}</td>
+        <td>${item.enrollmentType}</td>
+      </tr>`).join("");
+
+    directoryEmpty.classList.toggle("hidden", matches.length !== 0);
+    directoryCount.textContent = needle
+      ? `Showing ${matches.length} of ${current2027.length} 2027 enrollment codes.`
+      : `${current2027.length} enrollment codes available for 2027.`;
+  }
+
+  directorySearch.addEventListener("input", () => renderDirectory(directorySearch.value));
+
+  directoryBody.addEventListener("click", event => {
+    const button = event.target.closest("button[data-code]");
+    if (!button) return;
+    input.value = button.dataset.code;
+    lookup(true);
+    input.scrollIntoView({ behavior: "smooth", block: "center" });
+    input.focus({ preventScroll: true });
+  });
+
+  renderDirectory();
+
+  function metricSection(title, oldValue, newValue, suffix = "") {
+    return `
+      <section class="metric-section">
+        <h3>${title}</h3>
+        <div class="compare-grid">
+          <div class="value-box">
+            <span class="label">2026</span>
+            <strong>${money(oldValue)}${suffix}</strong>
+          </div>
+          <div class="value-box">
+            <span class="label">2027</span>
+            <strong>${money(newValue)}${suffix}</strong>
+          </div>
+          <div class="value-box change">
+            <span class="label">Increase</span>
+            <strong>${delta(oldValue, newValue)} · ${pct(oldValue, newValue)}</strong>
+          </div>
+        </div>
+      </section>`;
+  }
+
+  function render(item) {
+    message.innerHTML = "";
+
+    if (!item.y2027) {
+      result.classList.add("hidden");
+      message.innerHTML = `
+        <div class="notice" role="status">
+          <strong>Enrollment code ${item.code} appears in the 2026 sheet but not the 2027 sheet.</strong><br>
+          2026 listing: ${item.plan2026} — ${item.option2026} — ${item.enrollmentType}.
+          No 2027 premium comparison is available from the supplied 2027 FFS file.
+        </div>`;
+      return;
+    }
+
+    if (!item.y2026) {
+      result.classList.add("hidden");
+      message.innerHTML = `
+        <div class="notice" role="status">
+          <strong>Enrollment code ${item.code} appears in 2027 but not 2026.</strong>
+          A year-over-year comparison cannot be calculated.
+        </div>`;
+      return;
+    }
+
+    const y26 = item.y2026;
+    const y27 = item.y2027;
+    const annual26 = y26.biweeklyEmployee * 26;
+    const annual27 = y27.biweeklyEmployee * 26;
+
+    const renamed = item.plan2026 !== item.plan2027 || item.option2026 !== item.option2027;
+    const renameNote = renamed
+      ? `<div class="rename-note">2026 label: <strong>${item.plan2026} — ${item.option2026}</strong><br>
+           2027 label: <strong>${item.plan2027} — ${item.option2027}</strong></div>`
+      : "";
+
+    result.innerHTML = `
+      <div class="result-head">
+        <div>
+          <div class="eyebrow">FEHB enrollment code</div>
+          <h2>${item.plan}</h2>
+          <div class="subline">${item.option} · ${item.enrollmentType} · ${item.location}</div>
+          ${renameNote}
+        </div>
+        <div class="code-badge">${item.code}</div>
+      </div>
+
+      <div class="metrics">
+        ${metricSection("Employee premium — biweekly", y26.biweeklyEmployee, y27.biweeklyEmployee)}
+        ${metricSection("Estimated annual employee premium (26 pay periods)", annual26, annual27)}
+        ${metricSection("Employee premium — monthly", y26.monthlyEmployee, y27.monthlyEmployee)}
+        ${metricSection("Total premium — biweekly", y26.biweeklyTotal, y27.biweeklyTotal)}
+        ${metricSection("Government contribution — biweekly", y26.biweeklyGovt, y27.biweeklyGovt)}
+        ${metricSection("Total premium — monthly", y26.monthlyTotal, y27.monthlyTotal)}
+      </div>
+
+      <div class="details">
+        The annual employee figure is calculated as the listed biweekly employee premium × 26 pay periods.
+        Monthly figures are displayed exactly as represented in the supplied FEHB premium files.
+        This tool compares premium rates only; it does not compare deductibles, copays, coinsurance,
+        provider networks, or other plan benefits.
+      </div>
+    `;
+    result.classList.remove("hidden");
+  }
+
+  function lookup(pushState = true) {
+    const code = cleanCode(input.value);
+    if (!code) {
+      result.classList.add("hidden");
+      message.innerHTML = `<div class="notice" role="alert">Enter an enrollment code.</div>`;
+      return;
+    }
+    const item = byCode.get(code);
+    if (!item) {
+      result.classList.add("hidden");
+      message.innerHTML = `<div class="notice" role="alert">Enrollment code <strong>${code}</strong> was not found in either supplied FFS spreadsheet.</div>`;
+      return;
+    }
+
+    render(item);
+    if (pushState && window.history && window.URLSearchParams) {
+      const url = new URL(window.location.href);
+      url.searchParams.set("code", item.code);
+      history.replaceState(null, "", url);
+    }
+  }
+
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+    lookup(true);
+  });
+
+  const initial = new URLSearchParams(window.location.search).get("code");
+  if (initial) {
+    input.value = initial;
+    lookup(false);
+  }
+})();
+</script>
+</body>
+</html>
